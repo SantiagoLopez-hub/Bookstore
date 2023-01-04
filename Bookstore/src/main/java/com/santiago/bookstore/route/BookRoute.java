@@ -1,6 +1,8 @@
 package com.santiago.bookstore.route;
 
+import com.santiago.bookstore.model.Author;
 import com.santiago.bookstore.model.Book;
+import com.santiago.bookstore.repo.AuthorRepo;
 import com.santiago.bookstore.repo.BookRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import java.util.List;
 @RequestMapping("/books")
 public class BookRoute {
     private final BookRepo bookRepo;
+    private final AuthorRepo authorRepo;
 
     // Get all books
     @GetMapping
@@ -32,8 +35,10 @@ public class BookRoute {
     public ResponseEntity<String> createBook(@RequestParam Double price,
                                              @RequestParam String title,
                                              @RequestParam String isbn,
-                                             @RequestParam String author,
+                                             @RequestParam Long authorId,
                                              @RequestParam String publisher) {
+
+        Author author = authorRepo.findById(authorId).orElse(null);
         Book book = Book.builder()
                 .price(price)
                 .title(title)
@@ -61,7 +66,7 @@ public class BookRoute {
             book.setPrice(price);
             book.setTitle(title);
             book.setIsbn(isbn);
-            book.setAuthor(author);
+//            book.setAuthor(author);
             book.setPublisher(publisher);
             bookRepo.save(book);
         } catch (Exception e) {

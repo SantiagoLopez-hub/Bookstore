@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -19,10 +18,6 @@ public class Author {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
-    @OneToMany(mappedBy = "author")
-    @ToString.Exclude
-    private List<Book> bookList;
 
     @Override
     public boolean equals(Object o) {

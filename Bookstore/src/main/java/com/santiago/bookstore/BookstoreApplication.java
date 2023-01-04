@@ -15,15 +15,16 @@ public class BookstoreApplication {
         SpringApplication.run(BookstoreApplication.class, args);
     }
 
-     @Bean
-     public CommandLineRunner runner(BookRepo bookRepo, AuthorRepo authorRepo) {
-         return args -> {
-             authorRepo.save(Author.builder().id(1L).name("Rodrigo").build());
+    @Bean
+    public CommandLineRunner runner(BookRepo bookRepo, AuthorRepo authorRepo) {
+        return args -> {
+            authorRepo.save(Author.builder().id(1L).name("Rodrigo").build());
 
-             bookRepo.save(Book.builder().id(1L).title("The Lord of the Rings")
-                             .author(authorRepo.findById(1L).get().getName()).build());
-             bookRepo.save(Book.builder().id(2L).title("The Hobbit").build());
-             bookRepo.save(Book.builder().id(3L).title("The Silmarillion").build());
-         };
-     }
+            bookRepo.save(Book.builder().id(1L).title("The Lord of the Rings")
+                    .author(authorRepo.findById(1L).get()).build());
+            bookRepo.save(Book.builder().id(2L).title("The Hobbit")
+                    .author(authorRepo.findById(1L).get()).build());
+            bookRepo.save(Book.builder().id(3L).title("The Silmarillion").build());
+        };
+    }
 }
