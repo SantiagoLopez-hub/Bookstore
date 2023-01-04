@@ -17,14 +17,17 @@ public class AuthorRoute {
 
     // Get all Authors
     @GetMapping
-    public ResponseEntity<List<Author>> getAuthors() {
-        return ResponseEntity.ok((List<Author>) authorRepo.findAll());
+    public ResponseEntity<Iterable<Author>> getAuthors() {
+        return ResponseEntity.ok(authorRepo.findAll());
     }
 
     // Get specific Author by id
     @GetMapping("/{authorId}")
     public ResponseEntity<Author> getAuthor(@PathVariable Long authorId) {
-        return ResponseEntity.ok(authorRepo.findById(authorId).orElse(null));
+        Author author = authorRepo.findById(authorId).orElse(null);
+        if (author == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).build();}
+
+        return ResponseEntity.ok(author);
     }
 
     // Create Author

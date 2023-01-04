@@ -20,14 +20,17 @@ public class BookRoute {
 
     // Get all books
     @GetMapping
-    public ResponseEntity<List<Book>> getBooks() {
-        return ResponseEntity.ok((List<Book>) bookRepo.findAll());
+    public ResponseEntity<Iterable<Book>> getBooks() {
+        return ResponseEntity.ok(bookRepo.findAll());
     }
 
     // Get specific book by id
     @GetMapping("/{bookId}")
     public ResponseEntity<Book> getBook(@PathVariable Long bookId) {
-        return ResponseEntity.ok(bookRepo.findById(bookId).orElse(null));
+        Book book = bookRepo.findById(bookId).orElse(null);
+        if (book == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).build();}
+
+        return ResponseEntity.ok(book);
     }
 
     // Create book
@@ -57,16 +60,17 @@ public class BookRoute {
                                              @RequestParam Double price,
                                              @RequestParam String title,
                                              @RequestParam String isbn,
-                                             @RequestParam String author,
+                                             @RequestParam Long authorId,
                                              @RequestParam String publisher) {
         try {
+            Author author = authorRepo.findById(authorId).orElse(null);
             Book book = bookRepo.findById(bookId).orElse(null);
             assert book != null;
 
             book.setPrice(price);
             book.setTitle(title);
             book.setIsbn(isbn);
-//            book.setAuthor(author);
+            book.setAuthor(author);
             book.setPublisher(publisher);
             bookRepo.save(book);
         } catch (Exception e) {

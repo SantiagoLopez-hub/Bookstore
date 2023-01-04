@@ -18,7 +18,9 @@ public class BookstoreApplication {
     @Bean
     public CommandLineRunner runner(BookRepo bookRepo, AuthorRepo authorRepo) {
         return args -> {
-            authorRepo.save(Author.builder().id(1L).name("Rodrigo").build());
+            authorRepo.save(Author.builder().name("Rodrigo").build());
+            authorRepo.save(Author.builder().name("William").build());
+            authorRepo.save(Author.builder().name("Zoey").build());
 
             bookRepo.save(Book.builder().id(1L).title("The Lord of the Rings")
                     .author(authorRepo.findById(1L).get()).build());
