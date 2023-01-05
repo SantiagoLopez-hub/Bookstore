@@ -1,4 +1,4 @@
-# Bookshop
+# Bookstore
 
 This Spring boot API application was created using Spring Web, Lombok, Data JPA and H2 as a RDBMS.
 
