@@ -2,8 +2,10 @@ package com.santiago.bookstore;
 
 import com.santiago.bookstore.model.Author;
 import com.santiago.bookstore.model.Book;
+import com.santiago.bookstore.model.Publisher;
 import com.santiago.bookstore.repo.AuthorRepo;
 import com.santiago.bookstore.repo.BookRepo;
+import com.santiago.bookstore.repo.PublisherRepo;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,17 +18,31 @@ public class BookstoreApplication {
     }
 
     @Bean
-    public CommandLineRunner runner(BookRepo bookRepo, AuthorRepo authorRepo) {
+    public CommandLineRunner runner(BookRepo bookRepo, AuthorRepo authorRepo, PublisherRepo publisherRepo) {
         return args -> {
             authorRepo.save(Author.builder().name("Rodrigo").build());
             authorRepo.save(Author.builder().name("William").build());
             authorRepo.save(Author.builder().name("Zoey").build());
 
-            bookRepo.save(Book.builder().id(1L).title("The Lord of the Rings")
-                    .author(authorRepo.findById(1L).get()).build());
-            bookRepo.save(Book.builder().id(2L).title("The Hobbit")
-                    .author(authorRepo.findById(1L).get()).build());
-            bookRepo.save(Book.builder().id(3L).title("The Silmarillion").build());
+            publisherRepo.save(Publisher.builder().name("Penguin").build());
+
+            bookRepo.save(
+                    Book.builder()
+                            .title("The Lord of the Rings")
+                            .author(authorRepo.findById(1L).get())
+                            .publisher(publisherRepo.findById(1L).get())
+                            .build());
+
+            bookRepo.save(
+                    Book.builder()
+                            .title("The Hobbit")
+                            .author(authorRepo.findById(1L).get())
+                            .build());
+
+            bookRepo.save(
+                    Book.builder()
+                            .title("The Silmarillion")
+                            .build());
         };
     }
 }

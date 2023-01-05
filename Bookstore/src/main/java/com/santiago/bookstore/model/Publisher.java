@@ -1,9 +1,13 @@
 package com.santiago.bookstore.model;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.*;
+import org.hibernate.Hibernate;
 
-import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -18,7 +22,16 @@ public class Publisher {
     private Long id;
     private String name;
 
-    @OneToMany(mappedBy = "publisher")
-    @ToString.Exclude
-    private List<Book> bookList;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Publisher publisher = (Publisher) o;
+        return id != null && Objects.equals(id, publisher.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

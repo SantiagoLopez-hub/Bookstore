@@ -24,7 +24,8 @@ public class Book {
     private String title;
     private Double price;
     private String isbn;
-    private String publisher;
+    @ManyToOne
+    private Publisher publisher;
 
     @Override
     public boolean equals(Object o) {

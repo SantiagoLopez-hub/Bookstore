@@ -57,7 +57,7 @@ public class PublisherRoute {
     }
 
     // Delete Publisher
-    @DeleteMapping("/{PublisherId}")
+    @DeleteMapping("/{publisherId}")
     public ResponseEntity<String> deletePublisher(@PathVariable Long publisherId) {
         try {
             publisherRepo.deleteById(publisherId);

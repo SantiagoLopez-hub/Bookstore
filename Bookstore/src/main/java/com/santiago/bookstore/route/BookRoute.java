@@ -2,8 +2,10 @@ package com.santiago.bookstore.route;
 
 import com.santiago.bookstore.model.Author;
 import com.santiago.bookstore.model.Book;
+import com.santiago.bookstore.model.Publisher;
 import com.santiago.bookstore.repo.AuthorRepo;
 import com.santiago.bookstore.repo.BookRepo;
+import com.santiago.bookstore.repo.PublisherRepo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class BookRoute {
     private final BookRepo bookRepo;
     private final AuthorRepo authorRepo;
+    private final PublisherRepo publisherRepo;
 
     // Get all books
     @GetMapping
@@ -37,8 +40,8 @@ public class BookRoute {
                                              @RequestParam String title,
                                              @RequestParam String isbn,
                                              @RequestParam Long authorId,
-                                             @RequestParam String publisher) {
-
+                                             @RequestParam Long publisherId) {
+        Publisher publisher = publisherRepo.findById(publisherId).orElse(null);
         Author author = authorRepo.findById(authorId).orElse(null);
         Book book = Book.builder()
                 .price(price)
@@ -59,10 +62,11 @@ public class BookRoute {
                                              @RequestParam String title,
                                              @RequestParam String isbn,
                                              @RequestParam Long authorId,
-                                             @RequestParam String publisher) {
+                                             @RequestParam Long publisherId) {
         try {
             Author author = authorRepo.findById(authorId).orElse(null);
             Book book = bookRepo.findById(bookId).orElse(null);
+            Publisher publisher = publisherRepo.findById(publisherId).orElse(null);
             assert book != null;
 
             book.setPrice(price);
