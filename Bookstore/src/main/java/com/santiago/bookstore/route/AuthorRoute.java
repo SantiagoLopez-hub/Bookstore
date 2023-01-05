@@ -34,8 +34,7 @@ public class AuthorRoute {
 
     // Update Author
     @PutMapping("/{authorId}")
-    public ResponseEntity<String> updateAuthor(@PathVariable Long authorId,
-                                               @RequestParam String name) {
+    public ResponseEntity<String> updateAuthor(@PathVariable Long authorId, @RequestParam String name) {
         return authorService.updateAuthor(authorId, name);
     }
 
