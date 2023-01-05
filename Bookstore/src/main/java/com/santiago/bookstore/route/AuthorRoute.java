@@ -45,7 +45,7 @@ public class AuthorRoute {
                                                @RequestParam String name) {
         try {
             Author author = authorRepo.findById(authorId).orElse(null);
-            assert author != null;
+            if (author == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Author not found.");}
 
             author.setName(name);
             authorRepo.save(author);

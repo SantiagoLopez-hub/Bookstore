@@ -45,7 +45,7 @@ public class PublisherRoute {
                                                @RequestParam String name) {
         try {
             Publisher publisher = publisherRepo.findById(publisherId).orElse(null);
-            assert publisher != null;
+            if (publisher == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publisher not found.");}
 
             publisher.setName(name);
             publisherRepo.save(publisher);

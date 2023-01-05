@@ -41,8 +41,12 @@ public class BookRoute {
                                              @RequestParam String isbn,
                                              @RequestParam Long authorId,
                                              @RequestParam Long publisherId) {
-        Publisher publisher = publisherRepo.findById(publisherId).orElse(null);
         Author author = authorRepo.findById(authorId).orElse(null);
+        Publisher publisher = publisherRepo.findById(publisherId).orElse(null);
+
+        if (author == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Author not found.");}
+        if (publisher == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publisher not found.");}
+
         Book book = Book.builder()
                 .price(price)
                 .title(title)
@@ -67,7 +71,10 @@ public class BookRoute {
             Author author = authorRepo.findById(authorId).orElse(null);
             Book book = bookRepo.findById(bookId).orElse(null);
             Publisher publisher = publisherRepo.findById(publisherId).orElse(null);
-            assert book != null;
+
+            if (author == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Author not found.");}
+            if (book == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Book not found.");}
+            if (publisher == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publisher not found.");}
 
             book.setPrice(price);
             book.setTitle(title);
