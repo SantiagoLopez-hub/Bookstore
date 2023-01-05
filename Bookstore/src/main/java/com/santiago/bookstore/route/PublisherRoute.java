@@ -29,7 +29,7 @@ public class PublisherRoute {
     }
 
     // Create Publisher
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<String> createPublisher(@RequestParam String name) {
         Publisher publisher = Publisher.builder()
                 .name(name)

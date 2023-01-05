@@ -27,7 +27,7 @@ public class AuthorRoute {
     }
 
     // Create Author
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<String> createAuthor(@RequestParam String name) {
         return authorService.createAuthor(name);
     }
