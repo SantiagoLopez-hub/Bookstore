@@ -2,8 +2,8 @@ package com.santiago.bookstore.route;
 
 import com.santiago.bookstore.model.Author;
 import com.santiago.bookstore.repo.AuthorRepo;
+import com.santiago.bookstore.service.AuthorService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,59 +12,36 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/authors")
 public class AuthorRoute {
     private final AuthorRepo authorRepo;
+    private final AuthorService authorService;
 
     // Get all Authors
     @GetMapping
-    public ResponseEntity<Iterable<Author>> getAuthors() {
-        return ResponseEntity.ok(authorRepo.findAll());
+    public ResponseEntity<Iterable<Author>> getAllAuthors() {
+        return authorService.getAllAuthors();
     }
 
     // Get specific Author by id
     @GetMapping("/{authorId}")
     public ResponseEntity<Author> getAuthor(@PathVariable Long authorId) {
-        Author author = authorRepo.findById(authorId).orElse(null);
-        if (author == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).build();}
-
-        return ResponseEntity.ok(author);
+        return authorService.getAuthor(authorId);
     }
 
     // Create Author
     @PostMapping()
     public ResponseEntity<String> createAuthor(@RequestParam String name) {
-        Author author = Author.builder()
-                .name(name)
-                .build();
-
-        authorRepo.save(author);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Created author with name " + name + ".");
+        return authorService.createAuthor(name);
     }
 
     // Update Author
     @PutMapping("/{authorId}")
     public ResponseEntity<String> updateAuthor(@PathVariable Long authorId,
                                                @RequestParam String name) {
-        try {
-            Author author = authorRepo.findById(authorId).orElse(null);
-            if (author == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Author not found.");}
-
-            author.setName(name);
-            authorRepo.save(author);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body("Author " + authorId + " Updated");
+        return authorService.updateAuthor(authorId, name);
     }
 
-    // Delete Author
+    // Delete Author - Removes all books belonging to author
     @DeleteMapping("/{authorId}")
     public ResponseEntity<String> deleteAuthor(@PathVariable Long authorId) {
-        try {
-            authorRepo.deleteById(authorId);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body("Author " + authorId + " Deleted");
+        return authorService.deleteAuthor(authorId);
     }
 }
