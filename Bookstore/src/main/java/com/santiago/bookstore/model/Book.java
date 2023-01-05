@@ -1,7 +1,6 @@
 package com.santiago.bookstore.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
@@ -16,14 +15,17 @@ import java.util.Objects;
 @Entity
 public class Book {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Double price;
+    @ManyToOne
+    private Author author;
 
     private String title;
+    private Double price;
     private String isbn;
-    private String author;
-    private String publisher;
+    @ManyToOne
+    private Publisher publisher;
 
     @Override
     public boolean equals(Object o) {

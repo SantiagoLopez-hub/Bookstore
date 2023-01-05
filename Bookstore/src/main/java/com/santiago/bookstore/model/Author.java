@@ -1,12 +1,9 @@
 package com.santiago.bookstore.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.Hibernate;
 
-import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -18,12 +15,9 @@ import java.util.Objects;
 @Entity
 public class Author {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-
-    @OneToMany(mappedBy = "author")
-    @ToString.Exclude
-    private List<Book> bookList;
 
     @Override
     public boolean equals(Object o) {
