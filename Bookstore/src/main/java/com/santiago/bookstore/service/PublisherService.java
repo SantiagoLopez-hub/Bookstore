@@ -1,64 +1,58 @@
 package com.santiago.bookstore.service;
 
+import com.santiago.bookstore.dto.PublisherRequest;
+import com.santiago.bookstore.exception.ResourceNotFoundException;
 import com.santiago.bookstore.model.Publisher;
 import com.santiago.bookstore.repo.BookRepo;
 import com.santiago.bookstore.repo.PublisherRepo;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class PublisherService {
     private final PublisherRepo publisherRepo;
     private final BookRepo bookRepo;
 
-    public ResponseEntity<Iterable<Publisher>> getAllPublishers() {
-        return ResponseEntity.ok(publisherRepo.findAll());
+    public List<Publisher> getAllPublishers() {
+        return publisherRepo.findAll();
     }
 
-    public ResponseEntity<Publisher> getPublisher(Long publisherId) {
-        Publisher publisher = publisherRepo.findById(publisherId).orElse(null);
-        if (publisher == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).build();}
-
-        return ResponseEntity.ok(publisher);
+    public Publisher getPublisher(Long publisherId) {
+        return publisherRepo.findById(publisherId)
+                .orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + publisherId));
     }
 
-    public ResponseEntity<String> createPublisher(String name) {
+    @Transactional
+    public Publisher createPublisher(PublisherRequest publisherRequest) {
         Publisher publisher = Publisher.builder()
-                .name(name)
+                .name(publisherRequest.getName())
                 .build();
 
-        publisherRepo.save(publisher);
-        return ResponseEntity.status(HttpStatus.CREATED).body("Created Publisher with name " + name + ".");
+        return publisherRepo.save(publisher);
     }
 
-    public ResponseEntity<String> updatePublisher(Long publisherId, String name) {
-        try {
-            Publisher publisher = publisherRepo.findById(publisherId).orElse(null);
-            if (publisher == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Publisher not found.");}
+    @Transactional
+    public Publisher updatePublisher(Long publisherId, PublisherRequest publisherRequest) {
+        Publisher publisher = publisherRepo.findById(publisherId)
+                .orElseThrow(() -> new ResourceNotFoundException("Publisher not found with id: " + publisherId));
 
-            publisher.setName(name);
-            publisherRepo.save(publisher);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-
-        return ResponseEntity.status(HttpStatus.OK).body("Publisher " + publisherId + " Updated");
+        publisher.setName(publisherRequest.getName());
+        return publisherRepo.save(publisher);
     }
 
-    public ResponseEntity<String> deletePublisher(Long publisherId) {
-        try {
-            // Cascade, remove books belonging to author
-            bookRepo.deleteAll(bookRepo.findByPublisherId(publisherId));
-
-            // Remove publisher
-            publisherRepo.deleteById(publisherId);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    @Transactional
+    public void deletePublisher(Long publisherId) {
+        if (!publisherRepo.existsById(publisherId)) {
+            throw new ResourceNotFoundException("Publisher not found with id: " + publisherId);
         }
+        // Cascade, remove books belonging to author
+        bookRepo.deleteAll(bookRepo.findByPublisherId(publisherId));
 
-        return ResponseEntity.status(HttpStatus.OK).body("Publisher " + publisherId + " Deleted");
+        // Remove publisher
+        publisherRepo.deleteById(publisherId);
     }
 }

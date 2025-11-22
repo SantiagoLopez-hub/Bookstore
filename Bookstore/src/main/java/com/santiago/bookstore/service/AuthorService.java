@@ -1,67 +1,58 @@
 package com.santiago.bookstore.service;
 
+import com.santiago.bookstore.dto.AuthorRequest;
+import com.santiago.bookstore.exception.ResourceNotFoundException;
 import com.santiago.bookstore.model.Author;
 import com.santiago.bookstore.repo.AuthorRepo;
 import com.santiago.bookstore.repo.BookRepo;
-import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AuthorService {
     private final AuthorRepo authorRepo;
     private final BookRepo bookRepo;
 
-    public ResponseEntity<Iterable<Author>> getAllAuthors() {
-        return ResponseEntity.ok(authorRepo.findAll());
+    public List<Author> getAllAuthors() {
+        return authorRepo.findAll();
     }
 
-    public ResponseEntity<Author> getAuthor(Long authorId) {
-        Author author = authorRepo.findById(authorId).orElse(null);
-        if (author == null) {return ResponseEntity.status(HttpStatus.NOT_FOUND).build();}
-
-        return ResponseEntity.ok(author);
+    public Author getAuthor(Long authorId) {
+        return authorRepo.findById(authorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + authorId));
     }
 
-    public ResponseEntity<String> createAuthor(String name) {
+    @Transactional
+    public Author createAuthor(AuthorRequest authorRequest) {
         Author author = Author.builder()
-                .name(name)
+                .name(authorRequest.getName())
                 .build();
 
-        authorRepo.save(author);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body("Created author with name " + name + ".");
+        return authorRepo.save(author);
     }
 
-    public ResponseEntity<String> updateAuthor(Long authorId, String name) {
-        try {
-            Author author = authorRepo.findById(authorId).orElse(null);
-            if (author == null) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Author not found.");
-            }
+    @Transactional
+    public Author updateAuthor(Long authorId, AuthorRequest authorRequest) {
+        Author author = authorRepo.findById(authorId)
+                .orElseThrow(() -> new ResourceNotFoundException("Author not found with id: " + authorId));
 
-            author.setName(name);
-            authorRepo.save(author);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-
-        return ResponseEntity.ok("Author " + authorId + " Updated");
+        author.setName(authorRequest.getName());
+        return authorRepo.save(author);
     }
 
-    public ResponseEntity<String> deleteAuthor(Long authorId) {
-        try {
-            // Cascade, remove books belonging to author
-            bookRepo.deleteAll(bookRepo.findByAuthorId(authorId));
-
-            // Remove author
-            authorRepo.deleteById(authorId);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    @Transactional
+    public void deleteAuthor(Long authorId) {
+        if (!authorRepo.existsById(authorId)) {
+            throw new ResourceNotFoundException("Author not found with id: " + authorId);
         }
+        // Cascade, remove books belonging to author
+        bookRepo.deleteAll(bookRepo.findByAuthorId(authorId));
 
-        return ResponseEntity.ok("Author " + authorId + " Deleted");
+        // Remove author
+        authorRepo.deleteById(authorId);
     }
 }
