@@ -143,4 +143,13 @@ class BookRouteTest {
         mockMvc.perform(delete("/books/{id}", 99L))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    void getBook_WhenUnexpectedException_ShouldReturnInternalServerError() throws Exception {
+        when(bookService.getBook(1L)).thenThrow(new RuntimeException("Unexpected error"));
+
+        mockMvc.perform(get("/books/{id}", 1L))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error").value("Unexpected error"));
+    }
 }
