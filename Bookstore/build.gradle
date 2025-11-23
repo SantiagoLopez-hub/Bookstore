@@ -30,8 +30,11 @@ dependencies {
     testImplementation 'io.cucumber:cucumber-junit-platform-engine:7.15.0'
     testImplementation 'io.cucumber:cucumber-spring:7.15.0'
     testImplementation 'org.junit.platform:junit-platform-suite:1.10.1'
+    implementation platform('software.amazon.awssdk:bom:2.20.0')
+    implementation 'software.amazon.awssdk:cloudwatchlogs'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    systemProperty 'spring.profiles.active', 'local'
 }

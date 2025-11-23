@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="!local">
+        <!-- Use our custom appender -->
+        <appender name="CLOUDWATCH" class="com.santiago.bookstore.logging.CloudWatchAppender">
+            <region>us-east-1</region>
+            <logGroupName>bookstore-api-logs</logGroupName>
+            <logStreamName>api-instance-${HOSTNAME}</logStreamName>
+            <encoder>
+                <pattern>[%thread] %level %logger{20} - %msg%n%xThrowable</pattern>
+            </encoder>
+        </appender>
+    </springProfile>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE" />
+        <springProfile name="!local">
+            <appender-ref ref="CLOUDWATCH" />
+        </springProfile>
+    </root>
+</configuration>
