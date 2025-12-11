@@ -1,0 +1,7 @@
+package com.santiago.bookstore.exception;
+
+public class ResourceNotFoundException extends RuntimeException {
+    public ResourceNotFoundException(String message) {
+        super(message);
+    }
+}

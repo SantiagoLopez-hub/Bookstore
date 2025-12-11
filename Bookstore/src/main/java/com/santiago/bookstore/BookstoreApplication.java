@@ -17,32 +17,32 @@ public class BookstoreApplication {
         SpringApplication.run(BookstoreApplication.class, args);
     }
 
-    @Bean
-    public CommandLineRunner runner(BookRepo bookRepo, AuthorRepo authorRepo, PublisherRepo publisherRepo) {
-        return args -> {
-            authorRepo.save(Author.builder().name("Rodrigo").build());
-            authorRepo.save(Author.builder().name("William").build());
-            authorRepo.save(Author.builder().name("Zoey").build());
-
-            publisherRepo.save(Publisher.builder().name("Penguin").build());
-
-            bookRepo.save(
-                    Book.builder()
-                            .title("The Lord of the Rings")
-                            .author(authorRepo.findById(1L).get())
-                            .publisher(publisherRepo.findById(1L).get())
-                            .build());
-
-            bookRepo.save(
-                    Book.builder()
-                            .title("The Hobbit")
-                            .author(authorRepo.findById(1L).get())
-                            .build());
-
-            bookRepo.save(
-                    Book.builder()
-                            .title("The Silmarillion")
-                            .build());
-        };
-    }
+//    @Bean
+//    public CommandLineRunner runner(BookRepo bookRepo, AuthorRepo authorRepo, PublisherRepo publisherRepo) {
+//        return args -> {
+//            authorRepo.save(Author.builder().name("Rodrigo").build());
+//            authorRepo.save(Author.builder().name("William").build());
+//            authorRepo.save(Author.builder().name("Zoey").build());
+//
+//            publisherRepo.save(Publisher.builder().name("Penguin").build());
+//
+//            bookRepo.save(
+//                    Book.builder()
+//                            .title("The Lord of the Rings")
+//                            .author(authorRepo.findById(1L).get())
+//                            .publisher(publisherRepo.findById(1L).get())
+//                            .build());
+//
+//            bookRepo.save(
+//                    Book.builder()
+//                            .title("The Hobbit")
+//                            .author(authorRepo.findById(1L).get())
+//                            .build());
+//
+//            bookRepo.save(
+//                    Book.builder()
+//                            .title("The Silmarillion")
+//                            .build());
+//        };
+//    }
 }
